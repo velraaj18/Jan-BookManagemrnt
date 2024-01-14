@@ -5,7 +5,7 @@
       "name": "John",
       "surname": "Doe",
       "email": "user@email.com",
-      "issuedBook": "3",
+      "issuedBook": "1",
       "issuedDate": "04/01/2022",
       "returnDate": "05/01/2022",
       "subscriptionType": "Premium",
