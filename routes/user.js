@@ -28,6 +28,65 @@ router.get("/:id", (req, res) => {
   }
 });
 
+// to get the subscription details of a user
+router.get("/subscription/:id", (req, res) => {
+  const { id } = req.params;
+  const user = users.find((each) => each.id === id);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+  const getDateInDays = (data = "") => {
+    let date;
+    if (data === "") {
+      date = new Date();
+    } else {
+      date = new Date(data);
+    }
+
+    let days = Math.floor(date / (1000 * 60 * 60 * 24));
+    return days;
+  };
+
+  const subscriptionType = (date) => {
+    if (user.subscriptionType === "Basic") {
+      date = date + 90;
+    } else if (user.subscriptionType === "Standard") {
+      date = date + 180;
+    } else if (user.subscriptionType === "Premium") {
+      date = date + 365;
+    }
+    return date;
+  };
+
+  let returnDate = getDateInDays(user.returnDate);
+  let currentDate = getDateInDays();
+  let subscriptionDate = getDateInDays(user.subscriptionDate);
+  let subscriptionExpiration = subscriptionType(subscriptionDate);
+
+  const data = {
+    ...user,
+    subscriptionExpired: subscriptionExpiration < currentDate,
+    daysLeftForExpiration:
+      subscriptionExpiration <= currentDate
+        ? 0
+        : subscriptionDate - currentDate,
+    fine:
+      returnDate < currentDate
+        ? subscriptionExpiration <= currentDate
+          ? 200
+          : 100
+        : 0,
+  };
+
+  res.status(200).json({
+    success: true,
+    data: data,
+  });
+});
+
 // to add a new user .
 router.post("/", (req, res) => {
   const { id, name, surname, email, subscriptionType, subscriptionDate } =

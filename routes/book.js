@@ -104,7 +104,7 @@ router.post("/", (req, res) => {
 
 //To update an existing book using its ID.
 
-router.put("/:id", (req, res) => {
+router.put("/update/:id", (req, res) => {
   const { id } = req.params;
   const { data } = req.body;
   const book = books.find((each) => each.id === id);
